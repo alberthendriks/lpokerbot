@@ -1,15 +1,10 @@
-package statistics;
-
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 /*
  * Don't forget to call initRankPokerHand7() first.
  */
 public class RankPokerHandPublic {
-	
-	static ThreadLocalRandom random = ThreadLocalRandom.current(); 
 	
 	public enum Combination {
 
