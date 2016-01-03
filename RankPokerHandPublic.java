@@ -167,8 +167,8 @@ public class RankPokerHandPublic {
 	 * http://www.codeproject.com/Articles/569271/A-Poker-hand-analyzer-in-JavaScript-using-bit-math
 	 * http://suffe.cool/poker/evaluator.html
 	 * 
-	 * nr is an array of length 5, where each number should be 2..14.
-	 * suit is an array of length 5, where each number should be 0,1,2 or 3. This is different from rankPokerHand5
+	 * nr is an array of length 7, where each number should be 2..14.
+	 * suit is an array of length 7, where each number should be 0,1,2 or 3. This is different from rankPokerHand5
 	 */
 	public static int rankPokerHand7(int[] nr, int[] suit) {
 		int[] cards = new int[4];
