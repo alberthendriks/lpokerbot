@@ -352,7 +352,7 @@ public class RankPokerHandPublic {
     }
 
     /**
-     * cards[0] = player 1 first pocket card (0..12)
+     * cards[0] = player 1 first hole card (0..12)
      * suits[0] = player 1 first hole suit (0..3)
      * cards[1] = player 1 second hole card (0..12)
      * suits[1] = player 1 second hole suit (0..3)
@@ -363,7 +363,7 @@ public class RankPokerHandPublic {
      * cards[8] = player 2 second hole card (0..12) or -1 if unknown
      * suits[8] = player 2 second hole suit (0..3) or -1 if unknown
      *
-     * for any i (0<=i<=8): if cards[i]==-1 then it must be suits[i]==-1
+     * for any i (0<=i<=8): if cards[i]==-1 then it must be that suits[i]==-1
      */
     public static RangeResult rangeVsRange(int[] cards, int[] suits) {
         RangeResult rangeResult = new RangeResult();
