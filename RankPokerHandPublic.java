@@ -1,6 +1,5 @@
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RankPokerHandPublic {
 
