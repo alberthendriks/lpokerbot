@@ -260,7 +260,7 @@ public class RankPokerHandPublic {
         //System.out.println("Pair of 10's preflop against one player with random cards:"); // takes too long
         //System.out.println(rangeVsRange(new int[] {8,8,-1,-1,-1,-1,-1,-1,-1}, new int[] {0,1,-1,-1,-1,-1,-1,-1,-1}));
         //System.out.println("All two-player combinations"); // takes almost forever
-        //System.out.println(rangeVsRange(new int[] {8,8,-1,-1,-1,-1,-1,-1,-1}, new int[] {0,1,-1,-1,-1,-1,-1,-1,-1}));
+        //System.out.println(rangeVsRange(new int[] {-1,-1,-1,-1,-1,-1,-1,-1,-1}, new int[] {-1,-1,-1,-1,-1,-1,-1,-1,-1}));
     }
 
     private static int[] suits(int[] is) {
@@ -352,7 +352,7 @@ public class RankPokerHandPublic {
     }
 
     /**
-     * cards[0] = player 1 first hole card (0..12)
+     * cards[0] = player 1 first pocket card (0..12)
      * suits[0] = player 1 first hole suit (0..3)
      * cards[1] = player 1 second hole card (0..12)
      * suits[1] = player 1 second hole suit (0..3)
