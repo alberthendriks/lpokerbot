@@ -85,7 +85,7 @@ public class RankPokerHandPublic {
     }
 
     private static long minPos(long a, long b) {
-        return a == 0 ? b : b == 0 ? a : a > b ? a : b;
+        return a == 0 ? b : a > b ? a : b;
     }
 
     private static long max(long a, long b) {
@@ -238,7 +238,7 @@ public class RankPokerHandPublic {
         test(rankPokerHand5(new int[]{ 4, 4, 4, 8, 7}, suits(new int[]{1, 2, 3, 1, 2  }))); // 3 of a Kind
         test(rankPokerHand5(new int[]{ 3, 3, 3, K, A}, suits(new int[]{1, 2, 3, 1, 2  }))); // 3 of a Kind
         test(rankPokerHand5(new int[]{ 3, 3, 3, 6, 5}, suits(new int[]{1, 2, 3, 1, 2  }))); // 3 of a Kind
-        test(rankPokerHand5(new int[]{ 8, 8, J, 9, 9}, suits(new int[]{1, 2, 3, 1, 2  }))); // 2 Pair
+        test(rankPokerHand5(new int[]{ 8, 8, J, 9, 9}, suits(new int[]{0, 2, 3, 1, 3  }))); // 2 Pair
         test(rankPokerHand5(new int[]{ 8, 8,10, 9, 9}, suits(new int[]{1, 2, 3, 1, 2  }))); // 2 Pair
         test(rankPokerHand5(new int[]{ 7, 7, Q, 9, 9}, suits(new int[]{1, 2, 3, 1, 2  }))); // 2 Pair
         test(rankPokerHand5(new int[]{ 7, 7, 6, 9, 9}, suits(new int[]{1, 2, 3, 1, 2  }))); // 2 Pair
@@ -260,8 +260,12 @@ public class RankPokerHandPublic {
         int[] rank2 = {0, 0, 0, 1, 0, 8, 8};
         int[] suit2 = {0, 1, 2, 0, 3, 0, 1};
 
+        int[] rank3 = {0, 0, 0, 5, 0, 7, 7};
+        int[] suit3 = {0, 1, 2, 0, 3, 0, 1};
+
         System.out.println("four-of-a-kind 2's with A kicker: " + rankPokerHand7(rank, suit));
-        System.out.println("four-of-a-kind 2's with 3 kicker: " + rankPokerHand7(rank2, suit2));
+        System.out.println("four-of-a-kind 2's with 10 kicker: " + rankPokerHand7(rank2, suit2));
+        System.out.println("four-of-a-kind 2's with 9 kicker: " + rankPokerHand7(rank3, suit3));
 
         long runTime = System.currentTimeMillis() - startTime;
         System.out.println(runTime + " ms");
