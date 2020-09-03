@@ -48,6 +48,9 @@ public class RankPokerHandPublic {
     public final static int A=14, K=13, Q=12, J=11;
     public final static int[] suits5 = new int[] {1,2,4,8};
 
+    private final static long MASK4_1 = 0b11110000_11110000_11110000_11110000_11110000_11110000_11110000_11110000L;
+    private final static long MASK4_2 = 0b00001111_00001111_00001111_00001111_00001111_00001111_00001111_00001111L;
+
     /*
      * Get an int that is bigger as the hand is bigger, breaking ties and keeping actual (real) ties.
      * Apply >>26 to the returned value afterwards, to get the rank of the Combination (0..11)
@@ -72,11 +75,21 @@ public class RankPokerHandPublic {
         // break ties
         value = value << 26;
         value |= value == Combination.FULL_HOUSE.rank()<<26 ? 64-Long.numberOfLeadingZeros(v & (v<<1) & (v<<2)) << 20
-                : set == 0x403c/4 ? 0
-                : (64-Long.numberOfLeadingZeros(v & (v<<1)) << 20) | (Long.numberOfTrailingZeros(v & (v<<1)) << 14);
+                : set == 0x403c/4 ? 0 // Ace low straights
+                : ((64-Long.numberOfLeadingZeros(
+                        max((v&MASK4_1) & ((v&MASK4_1)<<1), (v&MASK4_2) & ((v&MASK4_2)<<1))) << 20) |
+                  (Long.numberOfTrailingZeros(
+                          minPos((v&MASK4_1) & ((v&MASK4_1)<<1), (v&MASK4_2) & ((v&MASK4_2)<<1))) << 14));
         value |= set;
-
         return value;
+    }
+
+    private static long minPos(long a, long b) {
+        return a == 0 ? b : b == 0 ? a : a > b ? a : b;
+    }
+
+    private static long max(long a, long b) {
+        return a > b ? a : b;
     }
 
     public static void initRankPokerHand7() {
@@ -192,6 +205,7 @@ public class RankPokerHandPublic {
     }
 
     public static void main(String[] args) {
+
         int count = 0;
         for (int i=0; i<128; i++) {
             if (Integer.bitCount(i)==3) {
@@ -239,6 +253,15 @@ public class RankPokerHandPublic {
         System.out.print("Setting up lookup tables... ");
         long startTime = System.currentTimeMillis();
         initRankPokerHand7();
+
+        int[] rank = {0, 0, 0, 1, 0, 12, 12};
+        int[] suit = {0, 1, 2, 0, 3, 0, 1};
+
+        int[] rank2 = {0, 0, 0, 1, 0, 8, 8};
+        int[] suit2 = {0, 1, 2, 0, 3, 0, 1};
+
+        System.out.println("four-of-a-kind 2's with A kicker: " + rankPokerHand7(rank, suit));
+        System.out.println("four-of-a-kind 2's with 3 kicker: " + rankPokerHand7(rank2, suit2));
 
         long runTime = System.currentTimeMillis() - startTime;
         System.out.println(runTime + " ms");
