@@ -77,15 +77,15 @@ public class RankPokerHandPublic {
         value |= value == Combination.FULL_HOUSE.rank()<<26 ? 64-Long.numberOfLeadingZeros(v & (v<<1) & (v<<2)) << 20
                 : set == 0x403c/4 ? 0 // Ace low straights
                 : ((64-Long.numberOfLeadingZeros(
-                        max((v&MASK4_1) & ((v&MASK4_1)<<1), (v&MASK4_2) & ((v&MASK4_2)<<1))) << 20) |
-                  (Long.numberOfTrailingZeros(
-                          minPos((v&MASK4_1) & ((v&MASK4_1)<<1), (v&MASK4_2) & ((v&MASK4_2)<<1))) << 14));
+                max((v&MASK4_1) & ((v&MASK4_1)<<1), (v&MASK4_2) & ((v&MASK4_2)<<1))) << 20) |
+                (Long.numberOfTrailingZeros(
+                        minPos((v&MASK4_1) & ((v&MASK4_1)<<1), (v&MASK4_2) & ((v&MASK4_2)<<1))) << 14));
         value |= set;
         return value;
     }
 
     private static long minPos(long a, long b) {
-        return a == 0 ? b : a > b ? a : b;
+        return a == 0 ? b : b == 0 ? a : a < b ? a : b;
     }
 
     private static long max(long a, long b) {
@@ -278,6 +278,14 @@ public class RankPokerHandPublic {
         printHandToCount();
         System.out.println(runTime + " ms");
 
+        System.out.println("AK vs 22 preflop:");
+        System.out.println(rangeVsRange(new int[] {11,12,-1,-1,-1,-1,-1,0,0}, new int[] {0,1,-1,-1,-1,-1,-1,0,1}));
+        System.out.println("22 vs AK preflop:");
+        System.out.println(rangeVsRange(new int[] {0,0,-1,-1,-1,-1,-1,11,12}, new int[] {0,1,-1,-1,-1,-1,-1,0,1}));
+        System.out.println("22 vs AK preflop:");
+        System.out.println(testRangeVsRange(0, 0, 0, 1, 11, 0, 12, 1));
+        System.out.println("AK vs 22 preflop:");
+        System.out.println(testRangeVsRange(12, 1, 11, 0, 0, 0, 0, 1));
         System.out.println("AK vs QQ preflop:");
         System.out.println(rangeVsRange(new int[] {12,11,-1,-1,-1,-1,-1,10,10}, new int[] {0,1,-1,-1,-1,-1,-1,0,2}));
         System.out.println("AK vs QQ with flop: AKQ:");
@@ -579,6 +587,95 @@ public class RankPokerHandPublic {
             }
         }
         return rangeResult;
+    }
+
+    private static RangeResult testRangeVsRange(int nr1, int suit1, int nr2, int suit2, int nr3, int suit3, int nr4, int suit4) {
+
+        //SevenCardEvaluator alternativeEvaluator = new SevenCardEvaluator();
+
+        RangeResult rangeResult = new RangeResult();
+        int[] nr = new int[7];
+        int[] suit = new int[7];
+        int newNr, newSuit;
+        for (int card2=0; card2<52; card2++) {
+            newNr = card2 / 4;
+            newSuit = card2 % 4;
+            if ((newNr == nr1 && newSuit == suit1) || (newNr == nr2 && newSuit == suit2) || (newNr == nr3 && newSuit == suit3) || (newNr == nr4 && newSuit == suit4)) {
+                continue;
+            }
+            nr[2] = newNr;
+            suit[2] = newSuit;
+            for (int card3=card2+1; card3<52; card3++) {
+                newNr = card3 / 4;
+                newSuit = card3 % 4;
+                if ((newNr == nr1 && newSuit == suit1) || (newNr == nr2 && newSuit == suit2) || (newNr == nr3 && newSuit == suit3) || (newNr == nr4 && newSuit == suit4)) {
+                    continue;
+                }
+                nr[3] = newNr;
+                suit[3] = newSuit;
+                for (int card4=card3+1; card4<52; card4++) {
+                    newNr = card4 / 4;
+                    newSuit = card4 % 4;
+                    if ((newNr == nr1 && newSuit == suit1) || (newNr == nr2 && newSuit == suit2) || (newNr == nr3 && newSuit == suit3) || (newNr == nr4 && newSuit == suit4)) {
+                        continue;
+                    }
+                    nr[4] = newNr;
+                    suit[4] = newSuit;
+                    for (int card5=card4+1; card5<52; card5++) {
+                        newNr = card5 / 4;
+                        newSuit = card5 % 4;
+                        if ((newNr == nr1 && newSuit == suit1) || (newNr == nr2 && newSuit == suit2) || (newNr == nr3 && newSuit == suit3) || (newNr == nr4 && newSuit == suit4)) {
+                            continue;
+                        }
+                        nr[5] = newNr;
+                        suit[5] = newSuit;
+                        for (int card6=card5+1; card6<52; card6++) {
+                            newNr = card6 / 4;
+                            newSuit = card6 % 4;
+                            if ((newNr == nr1 && newSuit == suit1) || (newNr == nr2 && newSuit == suit2) || (newNr == nr3 && newSuit == suit3) || (newNr == nr4 && newSuit == suit4)) {
+                                continue;
+                            }
+                            nr[6] = newNr;
+                            suit[6] = newSuit;
+
+                            nr[0] = nr1;
+                            suit[0] = suit1;
+                            nr[1] = nr2;
+                            suit[1] = suit2;
+
+                            int score1 = rankPokerHand7(nr, suit);
+
+                            int[] nrs1 = new int[] {
+                                    nr[0], nr[1], nr[2], nr[3], nr[4], nr[5], nr[6]};
+                            int[] suits1 = new int[] {
+                                    suit[0], suit[1], suit[2], suit[3], suit[4], suit[5], suit[6]};
+
+                            nr[0] = nr3;
+                            suit[0] = suit3;
+                            nr[1] = nr4;
+                            suit[1] = suit4;
+
+                            int score2 = rankPokerHand7(nr, suit);
+
+                            rangeResult.process(score1, score2);
+
+                            //if (alternativeEvaluator.compare(aceIs1(nrs1), suits1, aceIs1(nr), suit) != Integer.compare(score1, score2)) {
+                            //    throw new RuntimeException("disagreement");
+                            //}
+                        }
+                    }
+                }
+            }
+        }
+        return rangeResult;
+    }
+
+    private static int[] aceIs1(int[] nrs) {
+        int[] result = new int[nrs.length];
+        for (int i=0; i<nrs.length; i++) {
+            result[i] = 1+((nrs[i]+1)%13);
+        }
+        return result;
     }
 
     private static boolean duplicate(int card, int suit, int[] cards, int[] suits) {
