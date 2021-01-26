@@ -292,6 +292,8 @@ public class RankPokerHandPublic {
         System.out.println(rangeVsRange(new int[] {12,11,12,11,10,-1,-1,10,10}, new int[] {0,1,1,0,1,-1,-1,0,2}));
         System.out.println("Pair of A on the flow vs random opponent");
         System.out.println(rangeVsRange(new int[] {5,12,12,1,3,-1,-1,-1,-1}, new int[] {0,0,1,1,2,-1,-1,-1,-1}));
+        System.out.println("Postflop: 8s8c vs KsJs on AsAc5d");
+        System.out.println(rangeVsRange(new int[]{6, 6, 12, 12, 3, -1, -1, 11, 9}, new int[]{0, 1, 0, 1, 2, -1, -1, 0, 0}));
         //System.out.println("Pair of 10's preflop against one player with random cards:"); // takes too long
         //System.out.println(rangeVsRange(new int[] {8,8,-1,-1,-1,-1,-1,-1,-1}, new int[] {0,1,-1,-1,-1,-1,-1,-1,-1}));
         //System.out.println("All two-player combinations"); // takes almost forever
