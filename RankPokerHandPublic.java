@@ -165,10 +165,15 @@ public class RankPokerHandPublic {
     private final static int[] flush = new int[32768];
     private final static int[] straightFlush = new int[32768];
 
-    private static int[] cards = new int[4];
-
-    // suit must be 0..3 here!!
-    public static int rankPokerHand7(int[] nr, int[] suit) {
+    /**
+     * @param nr array of length 7 with card rankings 0..12 inclusive (0=Two, 12=Ace)
+     * @param suit array of length 7 with suits 0..3 inclusive
+     * @param cards buffer array of length 4 that's used by this method internally. Values can contain garbage and will
+     *              be overwritten. Caller should reuse this array on multiple calls to this method for best
+     *              performance.
+     * @return int indicating the relative strength of this hand.
+     */
+    public static int rankPokerHand7(int[] nr, int[] suit, int[] cards) {
         int index=0;
         for (int i=0; i<4; i++) {
             cards[i] = 0;
@@ -263,9 +268,11 @@ public class RankPokerHandPublic {
         int[] rank3 = {0, 0, 0, 5, 0, 7, 7};
         int[] suit3 = {0, 1, 2, 0, 3, 0, 1};
 
-        System.out.println("four-of-a-kind 2's with A kicker: " + rankPokerHand7(rank, suit));
-        System.out.println("four-of-a-kind 2's with 10 kicker: " + rankPokerHand7(rank2, suit2));
-        System.out.println("four-of-a-kind 2's with 9 kicker: " + rankPokerHand7(rank3, suit3));
+        int[] buffer = new int[4];
+
+        System.out.println("four-of-a-kind 2's with A kicker: " + rankPokerHand7(rank, suit, buffer));
+        System.out.println("four-of-a-kind 2's with 10 kicker: " + rankPokerHand7(rank2, suit2, buffer));
+        System.out.println("four-of-a-kind 2's with 9 kicker: " + rankPokerHand7(rank3, suit3, buffer));
 
         long runTime = System.currentTimeMillis() - startTime;
         System.out.println(runTime + " ms");
@@ -356,6 +363,7 @@ public class RankPokerHandPublic {
     private static void count7() {
         int[] nr = new int[7];
         int[] suit = new int[7];
+        int[] buffer = new int[4];
         for (int card1=0; card1<52; card1++) {
             suit[0] = card1%4;
             nr[0] = card1/4 ;
@@ -377,7 +385,7 @@ public class RankPokerHandPublic {
                                 for (int card7=card6+1; card7<52; card7++) {
                                     suit[6] = card7%4;
                                     nr[6] = card7/4 ;
-                                    int rank = rankPokerHand7(nr, suit) >> 26;
+                                    int rank = rankPokerHand7(nr, suit, buffer) >> 26;
                                     handToCount[rank]++;
                                 }
                             }
@@ -411,6 +419,7 @@ public class RankPokerHandPublic {
             suit[i] = -1;
         }
         int newNr, newSuit;
+        int[] buffer = new int[4];
         for (int card1=0; card1<52 || cards[0] != -1; card1++) {
             newNr = cards[0] != -1 ? cards[0] : card1 / 4;
             newSuit = suits[0] != -1 ? suits[0] : card1 % 4;
@@ -504,7 +513,7 @@ public class RankPokerHandPublic {
                                     nr[6] = newNr;
                                     suit[6] = newSuit;
 
-                                    int score1 = rankPokerHand7(nr, suit);
+                                    int score1 = rankPokerHand7(nr, suit, buffer);
 
                                     for (int card8 = 0; card8 < 52 || cards[7] != -1; card8++) {
                                         newNr = cards[7] != -1 ? cards[7] : card8 / 4;
@@ -532,7 +541,7 @@ public class RankPokerHandPublic {
                                             nr[1] = newNr;
                                             suit[1] = newSuit;
 
-                                            int score2 = rankPokerHand7(nr, suit);
+                                            int score2 = rankPokerHand7(nr, suit, buffer);
 
                                             rangeResult.process(score1, score2);
 
@@ -599,6 +608,7 @@ public class RankPokerHandPublic {
         int[] nr = new int[7];
         int[] suit = new int[7];
         int newNr, newSuit;
+        int[] buffer = new int[4];
         for (int card2=0; card2<52; card2++) {
             newNr = card2 / 4;
             newSuit = card2 % 4;
@@ -645,7 +655,7 @@ public class RankPokerHandPublic {
                             nr[1] = nr2;
                             suit[1] = suit2;
 
-                            int score1 = rankPokerHand7(nr, suit);
+                            int score1 = rankPokerHand7(nr, suit, buffer);
 
                             int[] nrs1 = new int[] {
                                     nr[0], nr[1], nr[2], nr[3], nr[4], nr[5], nr[6]};
@@ -657,7 +667,7 @@ public class RankPokerHandPublic {
                             nr[1] = nr4;
                             suit[1] = suit4;
 
-                            int score2 = rankPokerHand7(nr, suit);
+                            int score2 = rankPokerHand7(nr, suit, buffer);
 
                             rangeResult.process(score1, score2);
 
