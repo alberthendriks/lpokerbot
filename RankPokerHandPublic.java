@@ -705,7 +705,8 @@ public class RankPokerHandPublic {
         }
 
         public String toString() {
-            return "win: " + win + "; loss: " + loss + "; draw: " + draw;
+            double eq = ((double)win + 0.5d*(double)draw) / (double)(win+loss+draw);
+            return "win: " + win + "; loss: " + loss + "; draw: " + draw + "; eq: " + eq;
         }
     }
 }
