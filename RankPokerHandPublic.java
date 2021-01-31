@@ -402,7 +402,7 @@ public class RankPokerHandPublic {
      * cards[1] = player 1 second hole card (0..12)
      * suits[1] = player 1 second hole suit (0..3)
      * cards[i>=2, i<=6] = card on flop/turn/river (0..12) or -1 if not dealt yet
-     * cards[i>=2, i<=6] = suit on flop/turn/river (0..12) or -1 if not dealt yet
+     * suits[i>=2, i<=6] = suit on flop/turn/river (0..12) or -1 if not dealt yet
      * cards[7] = player 2 first hole card (0..12) or -1 if unknown
      * suits[7] = player 2 first hole suit (0..3) or -1 if unknown
      * cards[8] = player 2 second hole card (0..12) or -1 if unknown
