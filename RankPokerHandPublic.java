@@ -168,30 +168,30 @@ public class RankPokerHandPublic {
     /**
      * @param nr array of length 7 with card rankings 0..12 inclusive (0=Two, 12=Ace)
      * @param suit array of length 7 with suits 0..3 inclusive
-     * @param cards buffer array of length 4 that's used by this method internally. Values can contain garbage and will
+     * @param buffer buffer array of length 4 that's used by this method internally. Values can contain garbage and will
      *              be overwritten. Caller should reuse this array on multiple calls to this method for best
      *              performance.
      * @return int indicating the relative strength of this hand.
      */
-    public static int rankPokerHand7(int[] nr, int[] suit, int[] cards) {
+    public static int rankPokerHand7(int[] nr, int[] suit, int[] buffer) {
         int index=0;
         for (int i=0; i<4; i++) {
-            cards[i] = 0;
+            buffer[i] = 0;
         }
         for (int i=0; i<7; i++) {
-            cards[suit[i]] |= 1L << nr[i];
+            buffer[suit[i]] |= 1L << nr[i];
             index += recurrence[nr[i]];
         }
         index = index % 4731770;
         int value = lookup[index];
         int fl = 0;
         for (int i=0; i<4; i++) {
-            fl |= flush[cards[i]];
+            fl |= flush[buffer[i]];
         }
         int str = straight[index];
 
         int straightFl = fl==0 ? 0 :
-                (straightFlush[str&cards[0]] | straightFlush[str&cards[1]] | straightFlush[str&cards[2]] | straightFlush[str&cards[3]]);
+                (straightFlush[str&buffer[0]] | straightFlush[str&buffer[1]] | straightFlush[str&buffer[2]] | straightFlush[str&buffer[3]]);
 
         straightFl = Integer.highestOneBit(straightFl);
 
@@ -279,11 +279,13 @@ public class RankPokerHandPublic {
 
         System.out.println("totalLength = " + totalLength);
 
+        count7(); // warmup
+        handToCount = new int[12];
         startTime = System.currentTimeMillis();
         count7();
         runTime = System.currentTimeMillis() - startTime;
-        printHandToCount();
-        System.out.println(runTime + " ms");
+        long countHands = printHandToCount();
+        System.out.println(runTime + " ms; " + (countHands / runTime / 1000L) + " MH/s");
 
         System.out.println("AK vs 22 preflop:");
         System.out.println(rangeVsRange(new int[] {11,12,-1,-1,-1,-1,-1,0,0}, new int[] {0,1,-1,-1,-1,-1,-1,0,1}));
@@ -329,15 +331,16 @@ public class RankPokerHandPublic {
     }
 
 
-    private static void printHandToCount() {
-        float sum = 0;
+    private static long printHandToCount() {
+        long sum = 0;
         for (int count: handToCount){
             sum += count;
         }
         System.out.println("total hands: " + sum);
         for (int rank=handToCount.length-1; rank>=0; rank--) {
-            System.out.println(rank + ": " + Combination.fromRank(rank) + " => " + handToCount[rank] + " (" + handToCount[rank]/sum*100 + "%)");
+            System.out.println(rank + ": " + Combination.fromRank(rank) + " => " + handToCount[rank] + " (" + handToCount[rank]/((float)sum)*100 + "%)");
         }
+        return sum;
     }
 
     static int[] handToCount = new int[12];
@@ -360,7 +363,7 @@ public class RankPokerHandPublic {
         return result;
     }
 
-    private static void count7() {
+    public static void count7() {
         int[] nr = new int[7];
         int[] suit = new int[7];
         int[] buffer = new int[4];
@@ -385,8 +388,8 @@ public class RankPokerHandPublic {
                                 for (int card7=card6+1; card7<52; card7++) {
                                     suit[6] = card7%4;
                                     nr[6] = card7/4 ;
-                                    int rank = rankPokerHand7(nr, suit, buffer) >> 26;
-                                    handToCount[rank]++;
+                                    int rank = rankPokerHand7(nr, suit, buffer);
+                                    handToCount[rank >> 26]++;
                                 }
                             }
                         }
@@ -433,6 +436,7 @@ public class RankPokerHandPublic {
             suit[0] = newSuit; int keepSuit1 = newSuit;
             for (int card2 = 0; card2 < 52 || cards[1] != -1; card2++) {
                 if (cards[1] == -1 && cards[0] == -1 && card2 <= card1) {
+                    card2 = card1;
                     continue;
                 }
                 newNr = cards[1] != -1 ? cards[1] : card2 / 4;
@@ -458,6 +462,7 @@ public class RankPokerHandPublic {
                     suit[2] = newSuit;
                     for (int card4 = 0; card4 < 52 || cards[3] != -1; card4++) {
                         if (cards[3] == -1 && cards[2] == -1 && card4 <= card3) {
+                            card4 = card3;
                             continue;
                         }
                         newNr = cards[3] != -1 ? cards[3] : card4 / 4;
@@ -472,6 +477,7 @@ public class RankPokerHandPublic {
                         suit[3] = newSuit;
                         for (int card5 = 0; card5 < 52 || cards[4] != -1; card5++) {
                             if (cards[4] == -1 && cards[3] == -1 && card5 <= card4) {
+                                card5 = card4;
                                 continue;
                             }
                             newNr = cards[4] != -1 ? cards[4] : card5 / 4;
@@ -486,6 +492,7 @@ public class RankPokerHandPublic {
                             suit[4] = newSuit;
                             for (int card6 = 0; card6 < 52 || cards[5] != -1; card6++) {
                                 if (cards[5] == -1 && cards[4] == -1 && card6 <= card5) {
+                                    card6 = card5;
                                     continue;
                                 }
                                 newNr = cards[5] != -1 ? cards[5] : card6 / 4;
@@ -500,6 +507,7 @@ public class RankPokerHandPublic {
                                 suit[5] = newSuit;
                                 for (int card7 = 0; card7 < 52 || cards[6] != -1; card7++) {
                                     if (cards[6] == -1 && cards[5] == -1 && card7 <= card6) {
+                                        card7 = card6;
                                         continue;
                                     }
                                     newNr = cards[6] != -1 ? cards[6] : card7 / 4;
