@@ -279,13 +279,13 @@ public class RankPokerHandPublic {
 
         System.out.println("totalLength = " + totalLength);
 
-        count7(); // warmup
+        System.out.println("checksum: " + count7()); // warmup
         handToCount = new int[12];
         startTime = System.currentTimeMillis();
-        count7();
+        int checksum = count7();
         runTime = System.currentTimeMillis() - startTime;
         long countHands = printHandToCount();
-        System.out.println(runTime + " ms; " + (countHands / runTime / 1000L) + " MH/s");
+        System.out.println(runTime + " ms; " + (countHands / runTime / 1000L) + " MH/s; checksum: " + checksum);
 
         System.out.println("AK vs 22 preflop:");
         System.out.println(rangeVsRange(new int[] {11,12,-1,-1,-1,-1,-1,0,0}, new int[] {0,1,-1,-1,-1,-1,-1,0,1}));
@@ -363,7 +363,8 @@ public class RankPokerHandPublic {
         return result;
     }
 
-    public static void count7() {
+    public static int count7() {
+        int checksum = 0;
         int[] nr = new int[7];
         int[] suit = new int[7];
         int[] buffer = new int[4];
@@ -390,6 +391,7 @@ public class RankPokerHandPublic {
                                     nr[6] = card7/4 ;
                                     int rank = rankPokerHand7(nr, suit, buffer);
                                     handToCount[rank >> 26]++;
+                                    checksum += rank;
                                 }
                             }
                         }
@@ -397,6 +399,7 @@ public class RankPokerHandPublic {
                 }
             }
         }
+        return checksum;
     }
 
     /**
